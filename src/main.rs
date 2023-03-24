@@ -8,7 +8,7 @@ async fn main() {
     // println!("vec: {:?}", ip_vec);
 
     let l = ip_vec.len();
-    let mut final_res: Vec<String> = vec![];
+    let mut final_res: Vec<(usize, String)> = vec![];
     let mut sleep_count = 0;
     for (i, ip) in ip_vec.into_iter().enumerate() {
         // tokio::spawn();
@@ -27,16 +27,16 @@ async fn main() {
         let res = res.unwrap();
         println!("done: {}, total: {}, {}: {}", i, l, &ip, res);
         if res {
-            final_res.push(ip);
+            final_res.push((i, ip));
         }
         sleep_count += 1;
     }
 
     let a = tokio::fs::write(
         format!(".\\out\\final",),
-        final_res
-            .iter()
-            .fold(String::new(), |acc, v| acc + v + "\n"),
+        final_res.iter().fold(String::new(), |acc, v| {
+            acc + &format!("{} - {}", v.0, v.1) + "\n"
+        }),
     )
     .await;
     if a.is_err() {
